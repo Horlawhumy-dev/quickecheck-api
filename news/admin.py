@@ -1,15 +1,15 @@
 from django.contrib import admin
-from .models import News_ID, NewsItem
+from .models import HackerNewsID, QuickCheckItem
 
 
-class NewsIdAdmin(admin.ModelAdmin):
-    list_display = ('news', 'fetched_at')
-    list_display_links = ('news', 'fetched_at')
+class HackerNewsIDAdmin(admin.ModelAdmin):
+    list_display = ('hackernews_id', 'fetched_at')
+    list_display_links = ('hackernews_id', 'fetched_at')
     
-admin.site.register(News_ID, NewsIdAdmin)
+admin.site.register(HackerNewsID, HackerNewsIDAdmin)
 
-class NewsItemAdmin(admin.ModelAdmin):
+class QuickCheckItemAdmin(admin.ModelAdmin):
     list_display = ('id', 'type', 'by')
     list_display_links = ('id',)
     
-admin.site.register(NewsItem, NewsItemAdmin)
+admin.site.register(QuickCheckItem, QuickCheckItemAdmin)

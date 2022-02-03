@@ -1,18 +1,18 @@
 from dataclasses import field
 from pyexpat import model
 from rest_framework import serializers
-from .models import News_ID, NewsItem
+from .models import HackerNewsID, QuickCheckItem
 
 
 class NewsItemSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = NewsItem
+        model = QuickCheckItem
         fields = '__all__'
-        lookup_field = 'id'
+        # lookup_field = 'newsitem_id'
 
 class NewsIdSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = News_ID
-        fields = ('news',)
+        model = HackerNewsID
+        fields = ('hackernews_id',)
