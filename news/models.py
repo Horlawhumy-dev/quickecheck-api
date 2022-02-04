@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime
 from django.contrib.postgres.fields import ArrayField
-
+import math
 class HackerNewsID(models.Model):
     hackernews = models.BigIntegerField(unique=True, primary_key=True)
     fetched_at = models.DateTimeField(default=datetime.now())
@@ -24,10 +24,10 @@ class QuickCheckItem(models.Model):
     parent = models.IntegerField(null=True, blank=True)
     text = models.TextField(null=True, blank=True)
     url = models.URLField(null=True, blank=True)
-    title = models.TextField(null=True, blank=True)
+    title = models.CharField(max_length=255, null=True, blank=True)
     score = models.IntegerField(null=True, blank=True)
     descendants = models.IntegerField(null=True, blank=True)
-    time = models.BigIntegerField(unique=True, null=True, blank=True)
+    time = models.BigIntegerField(unique=True, null=True, blank=True, default=math.ceil((datetime.utcnow() - datetime(1970,1,1,0,0,0)).total_seconds()))
 
     def save(self, *args, **kwargs):
         id = HackerNewsID.objects.get('hackernews') # getting the news id
@@ -36,3 +36,21 @@ class QuickCheckItem(models.Model):
 
     def __str__(self):
         return self.id
+
+
+# This model will allow custom news to bes saved, and be posted to.
+class QuickCheckNews(models.Model):
+    type = models.CharField(max_length=100)
+    by = models.CharField(max_length=255)
+    kids = ArrayField(ArrayField(models.BigIntegerField(unique=True, null=True, blank=True))) # array field to store the array of kids value from the API.
+    parent = models.IntegerField(null=True, blank=True)
+    text = models.TextField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+    title = models.CharField(max_length=255)
+    score = models.IntegerField(null=True, blank=True)
+    descendants = models.IntegerField(null=True, blank=True)
+    deleted = models.BooleanField(default=False)
+    time = models.BigIntegerField(unique=True, null=True, blank=True, default=math.ceil((datetime.utcnow() - datetime(1970,1,1,0,0,0)).total_seconds()))
+
+    def __str__(self):
+        return f"{self.by} - {self.title.lower()}" #formatting as => (user - my-story-headlines) for instance.

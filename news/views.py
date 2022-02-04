@@ -3,13 +3,13 @@ from rest_framework.reverse import reverse
 from django.shortcuts import render
 import requests
 from  rest_framework import serializers
-from .serializers import NewsIdSerializer, NewsItemSerializer
+from .serializers import NewsIdSerializer, NewsItemSerializer, QuickCheckNewsSerializer
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
-from .models import HackerNewsID, QuickCheckItem
+from .models import HackerNewsID, QuickCheckItem, QuickCheckNews
 
 # GET list of all news ids from hackernews
 class NewsIdView(APIView):
@@ -31,15 +31,6 @@ class NewsIdView(APIView):
         return Response(res)
 
         
-    # def post(self, request, format=None):
-    #     serializer = NewsIdSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 class NewsItemView(RetrieveAPIView):
     permission_classes = [AllowAny]
@@ -56,26 +47,40 @@ class NewsItemView(RetrieveAPIView):
 
         return data
 
-    def get(self, request, format=True):
-        data = self.get_data_from_API()
+    def get(self, request, format=False):
+        data = self.get_data_from_API() # data from the API request
         
-        return Response(data, status=status.HTTP_201_CREATED)
+        return Response(data, request=request, status=status.HTTP_201_CREATED)
+
+    # def post(self, request, format=None):
+    #     serializer = NewsIdSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class QuickCheckNewsView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request, format=False):
+        quickchecknews = QuickCheckNews.objects.all()
+        serializer = QuickCheckNewsSerializer(quickchecknews, many=True)
+
+        if serializer:
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        
     def post(self, request, format=None):
-        # data = self.get_data_from_API()
-
-        serializer = NewsItemSerializer(data=request.data)
+        serializer = QuickCheckNewsSerializer(data=request.data)
         
         if serializer.is_valid():
             serializer.save()
-            return Response({
-                    **serializer.data,
-                    'kids': reverse(NewsItemSerializer.kids, request=request)},status=status.HTTP_201_CREATED)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 # def newsItem(request, pk):
 #     news_id = News_ID.objects.all()

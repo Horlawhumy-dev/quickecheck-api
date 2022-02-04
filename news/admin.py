@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import HackerNewsID, QuickCheckItem
+from .models import HackerNewsID, QuickCheckItem, QuickCheckNews
 
 
 class HackerNewsIDAdmin(admin.ModelAdmin):
@@ -13,3 +13,9 @@ class QuickCheckItemAdmin(admin.ModelAdmin):
     list_display_links = ('id',)
     
 admin.site.register(QuickCheckItem, QuickCheckItemAdmin)
+
+class QuickCheckNewsAdmin(admin.ModelAdmin):
+    # list_display = ('title', 'type', 'by')
+    # list_display_links = ('id',)
+    
+    admin.site.register(QuickCheckNews)
