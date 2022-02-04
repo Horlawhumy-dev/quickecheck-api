@@ -21,7 +21,7 @@ class MyCronJob(CronJobBase):
         res = [int(id.strip()) for id in result[news:]] # list comprehension
 
         for id in res:
-            news_id = HackerNewsID(hackernews_id=id)
+            news_id = HackerNewsID(hackernews=id)
             news_id.save()
 
 # run - python manage.py runcrons 

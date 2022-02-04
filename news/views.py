@@ -1,4 +1,5 @@
 import json
+from rest_framework.reverse import reverse
 from django.shortcuts import render
 import requests
 from  rest_framework import serializers
@@ -61,14 +62,16 @@ class NewsItemView(RetrieveAPIView):
         return Response(data, status=status.HTTP_201_CREATED)
 
 
-    def post(self, request, format=True):
-        data = self.get_data_from_API()
+    def post(self, request, format=None):
+        # data = self.get_data_from_API()
 
-        serializer = NewsItemSerializer(data=data)
+        serializer = NewsItemSerializer(data=request.data)
         
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({
+                    **serializer.data,
+                    'kids': reverse(NewsItemSerializer.kids, request=request)},status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
