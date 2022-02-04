@@ -3,8 +3,8 @@ from .models import HackerNewsID, QuickCheckItem
 
 
 class HackerNewsIDAdmin(admin.ModelAdmin):
-    list_display = ('hackernews_id', 'fetched_at')
-    list_display_links = ('hackernews_id', 'fetched_at')
+    list_display = ('hackernews', 'fetched_at')
+    list_display_links = ('hackernews', 'fetched_at')
     
 admin.site.register(HackerNewsID, HackerNewsIDAdmin)
 

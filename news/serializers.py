@@ -15,4 +15,4 @@ class NewsIdSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = HackerNewsID
-        fields = ('hackernews_id',)
+        fields = ('hackernews',)

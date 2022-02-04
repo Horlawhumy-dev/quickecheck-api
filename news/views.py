@@ -25,7 +25,7 @@ class NewsIdView(APIView):
         last = response.text.split(',')[-1]  #got this from API " 499287535 ] /n" --> reshaped to that below
         result.insert(len(result), last.strip().split()[0]) # "499287535"
         
-        res = [int(id.strip()) for id in result] # list comprehension
+        res = [int(id.strip()) for id in result] # list comprehension to strip each element of the data
         
         return Response(res)
 
@@ -42,24 +42,29 @@ class NewsIdView(APIView):
 
 class NewsItemView(RetrieveAPIView):
     permission_classes = [AllowAny]
-    lookup_field = 'newsitem_id'
+    lookup_field = 'id'
     
-    def get(self, request, format=True):
-
-        latest = HackerNewsID.objects.all()[len(HackerNewsID.objects.all())-1].news # getting latest id from db
+    def get_data_from_API(self):
+        latest = HackerNewsID.objects.all()[len(HackerNewsID.objects.all())-1].hackernews # getting latest id from db
        
         NEWS_URL = f'https://hacker-news.firebaseio.com/v0/item/{str(latest)}.json?print=pretty'
         
         headers = {'user-agent': 'quickcheck/0.0.1'} 
         response = requests.get(NEWS_URL, headers=headers)
         data = json.loads(response.text)
+
+        return data
+
+    def get(self, request, format=True):
+        data = self.get_data_from_API()
         
-        return Response(data)
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
-    def post(self, request, format=None):
+    def post(self, request, format=True):
+        data = self.get_data_from_API()
 
-        serializer = NewsItemSerializer(data=request.data)
+        serializer = NewsItemSerializer(data=data)
         
         if serializer.is_valid():
             serializer.save()
