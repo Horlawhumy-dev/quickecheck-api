@@ -41,4 +41,4 @@ class QuickCheckNewsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuickCheckNews
-        fields = '__all__'
+        fields = ['type', 'by', 'kids']

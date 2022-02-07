@@ -44,7 +44,7 @@ class QuickCheckItem(models.Model):
 class QuickCheckNews(models.Model):
     type = models.CharField(max_length=100)
     by = models.CharField(max_length=255, null=True, blank=True,)
-    kids = ArrayField(ArrayField(models.BigIntegerField(unique=True, null=True, blank=True))) # array field to store the array of kids value from the API.
+    kids = ArrayField(ArrayField(models.BigIntegerField(null=True, blank=True))) # array field to store the array of kids value from the API.
     parent = models.IntegerField(null=True, blank=True)
     text = models.TextField(null=True, blank=True)
     url = models.URLField(null=True, blank=True)
