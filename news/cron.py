@@ -18,7 +18,7 @@ class MyCronJob(CronJobBase):
         result.insert(len(result), last.strip().split()[0]) # "499287535"
 
         news = 400 # 100 downward/latest
-        res = [int(id.strip()) for id in result[news:]] # list comprehension
+        res = [int(id.strip()) for id in result[news+1:news+6]] # list comprehension
 
         for id in res:
             news_id = HackerNewsID(hackernews=id)
