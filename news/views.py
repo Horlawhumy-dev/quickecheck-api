@@ -56,7 +56,7 @@ class NewsItemView(RetrieveAPIView):
 
         return data
 
-
+#GET the latest hackernews streamed into db
     def get(self, request, format=None):
         data = self.get_data_from_API() # data from the API request
         
@@ -79,11 +79,8 @@ class QuickCheckNewsView(ListAPIView):
     search_fields = ['text'] # filter by text search
 
     pagination_class = QuickCheckNewsSetPagination
-
-        
-
-class QuickCheckPostView(APIView):
     
+
     def post(self, request, format=None):
         serializer = QuickCheckNewsSerializer(data=request.data)
         
@@ -92,16 +89,25 @@ class QuickCheckPostView(APIView):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+            
 
 
 class QuickCheckNewsRetrieveView(APIView):
-
+    
     def get_object(self, pk):
         try:
             return QuickCheckNews.objects.get(pk=pk)
         except QuickCheckNews.DoesNotExist:
             raise Http404
+
+    
+    def get(self, request, pk, format=None):
+        quickchecknews = self.get_object(pk)
+        serializer = QuickCheckNewsSerializer(quickchecknews)
+        if serializer:
+            return Response(serializer.data,status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
     def put(self, request, pk, format=None):

@@ -55,4 +55,4 @@ class QuickCheckNews(models.Model):
     time = models.BigIntegerField(unique=True, null=True, blank=True, default=math.ceil((datetime.utcnow() - datetime(1970,1,1,0,0,0)).total_seconds()))
 
     def __str__(self):
-        return f"{self.by} - {self.title.lower()}" #formatting as => (user - my-story-headlines) for instance.
+        return f"{self.by}" #formatting as => (user - my-story-headlines) for instance.
