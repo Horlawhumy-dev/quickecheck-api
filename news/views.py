@@ -15,10 +15,13 @@ from rest_framework import status
 from .models import HackerNewsID, QuickCheckItem, QuickCheckNews
 from .pagination import QuickCheckNewsSetPagination
 
-# GET list of all news ids from hackernews
+
+
+
 class NewsIdView(APIView):
     permission_classes = [AllowAny]
 
+# GET list of all news ids from hackernews
     def get(self, request, format=None):
 
         NEWS_URL = 'https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty'
@@ -32,35 +35,45 @@ class NewsIdView(APIView):
         
         res = [int(id.strip()) for id in result] # list comprehension to strip each element of the data
         
-        return Response(res)
+        return Response(res, status=status.HTTP_200_OK)
 
         
 
-class NewsItemView(RetrieveAPIView):
+class NewsItemView(ListAPIView):
     permission_classes = [AllowAny]
-    lookup_field = 'id'
-    
+
     def get_data_from_API(self):
         """
             This helps to return 
             formatted data fetched from endpoint provided
             using request.
         """
-        latest = HackerNewsID.objects.all()[len(HackerNewsID.objects.all())-1].hackernews # getting latest id from db
-       
-        NEWS_URL = f'https://hacker-news.firebaseio.com/v0/item/{str(latest)}.json?print=pretty'
-        
-        headers = {'user-agent': 'quickcheck/0.0.1'} 
-        response = requests.get(NEWS_URL, headers=headers)
-        data = json.loads(response.text)
+        # latest = HackerNewsID.objects.all()[len(HackerNewsID.objects.all())-1].hackernews # getting latest id from db
+        result = []
+        half = 0
+        total = len(HackerNewsID.objects.all()) # getting the total ids from the db
 
-        return data
+        #slicing into half based on even or odd total
+        if total % 2 == 0:
+            half = len(HackerNewsID.objects.all()) / 2
+        else:
+            half = (len(HackerNewsID.objects.all()) / 2) + 1
 
-#GET the latest hackernews streamed into db
+        ids = HackerNewsID.objects.all()[:half] #slicing the queryset to get last half
+
+        for id in ids:
+            NEWS_URL = f'https://hacker-news.firebaseio.com/v0/item/{str(id)}.json?print=pretty'
+            headers = {'user-agent': 'quickcheck/0.0.1'} 
+            response = requests.get(NEWS_URL, headers=headers)
+            data = json.loads(response.text)
+            result.append(data)
+
+        return result
+
+    
+#GET the latest hackernews streamed
     def get(self, request, format=None):
-        data = self.get_data_from_API() # data from the API request
-        
-        return Response(data,status=status.HTTP_201_CREATED)
+        return Response(self.get_data_from_API(),status=status.HTTP_201_CREATED)
 
 
 class QuickCheckNewsView(ListAPIView):
@@ -72,7 +85,7 @@ class QuickCheckNewsView(ListAPIView):
 
     filter_backends = [DjangoFilterBackend]
 
-    filterset_fields = ['type',] #filter by type options
+    filterset_fields = ['type'] #filter by type options
 
     filter_backends = [filters.SearchFilter] 
 

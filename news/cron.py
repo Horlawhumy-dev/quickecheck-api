@@ -24,4 +24,4 @@ class MyCronJob(CronJobBase):
             news_id = HackerNewsID(hackernews=id)
             news_id.save()
 
-# run - python manage.py runcrons 
+# run to add latest hackernews id to db - python manage.py runcrons 

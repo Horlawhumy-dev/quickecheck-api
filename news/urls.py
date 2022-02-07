@@ -21,3 +21,5 @@ urlpatterns =[
 
 #Filter route
 #http://127.0.0.1:8000/api/v0/items/news?type=comment
+
+#http://127.0.0.1:8000/api/v0/items/hackernews/ => GET method for the first half of hackernews data ids from db
