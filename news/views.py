@@ -39,7 +39,7 @@ class NewsIdView(APIView):
 
         
 
-class NewsItemView(ListAPIView):
+class NewsItemView(APIView):
     permission_classes = [AllowAny]
 
     def get_data_from_API(self):
